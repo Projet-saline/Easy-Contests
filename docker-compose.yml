@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  scrappy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
+    volumes:
+      - ./data.json:/app/data.json # Pour avoir accès à data.json depuis votre machine
