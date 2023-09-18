@@ -1,5 +1,21 @@
 from bs4 import BeautifulSoup
-import json, re, requests
+import json, re, requests, time, threading
+
+def timer(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        
+        try:
+            result = func(*args, **kwargs)
+        finally:
+            end = time.time()
+            elapsed_time = end - start
+            print(f"{func.__name__} timer : {elapsed_time:.0f}sec")
+
+        return result
+
+    return wrapper
+
 
 def fetchAllInstrument(session, base_url):
     response = session.get(base_url)
@@ -37,7 +53,6 @@ def fetchByInstrument(session, link):
             'link': link,
             'instrument': instrument
         })
-        
     return results
 
 def get_final_url(session, url):
@@ -47,7 +62,6 @@ def get_final_url(session, url):
     except Exception as e:
         print(f"Erreur lors de la récupération de l'URL finale pour {url}: {e}")
         return None
-
 
 def fetchContestWebsite(session, details):
     for detail in details:
@@ -72,7 +86,7 @@ def saveToJson(data, filename):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-
+@timer
 def main():
     base_url = 'https://www.musicalchairs.info/competitions'
     res = []
